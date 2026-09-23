@@ -200,8 +200,7 @@ export const DEVICE_PROFILES = {
     board: "esp32-s3-devkitc-1",
     displayPlatform: "epaper_spi",
     displayModel: "seeed-reterminal-sticky",
-    displayId: "my_display",
-    touchscreenId: "device_touchscreen",
+    skipTouchTransformOverride: true,
     isPackageBased: true,
     hardwarePackage: "hardware/seeedstudio-reterminal-sticky.yaml",
     resolution: { width: 800, height: 480 },
@@ -216,8 +215,7 @@ export const DEVICE_PROFILES = {
     },
     touch: {
       platform: "gt911",
-      id: "device_touchscreen",
-      i2c_id: "i2c_touch",
+      i2c_id: "bus_b",
       interrupt_pin: "GPIO21",
       reset_pin: "GPIO41",
       transform: { mirror_y: true }
@@ -238,8 +236,7 @@ export const DEVICE_PROFILES = {
     board: "esp32-s3-devkitc-1",
     displayPlatform: "epaper_spi",
     displayModel: "seeed-reterminal-sticky",
-    displayId: "my_display",
-    touchscreenId: "device_touchscreen",
+    skipTouchTransformOverride: true,
     isPackageBased: true,
     isUntestedProfile: true,
     hardwarePackage: "hardware/seeedstudio-reterminal-sticky.yaml",
@@ -255,8 +252,7 @@ export const DEVICE_PROFILES = {
     },
     touch: {
       platform: "gt911",
-      id: "device_touchscreen",
-      i2c_id: "i2c_touch",
+      i2c_id: "bus_b",
       interrupt_pin: "GPIO21",
       reset_pin: "GPIO41",
       transform: { mirror_y: true }
@@ -552,13 +548,12 @@ export const DEVICE_PROFILES = {
     board: "esp32-p4-evboard",
     displayPlatform: "mipi_dsi",
     displayModel: "JC4880P443",
-    displayId: "main_display",
-    touchscreenId: "device_touchscreen",
+    skipTouchTransformOverride: true,
     isPackageBased: true,
     hardwarePackage: "hardware/guition-esp32-p4-jc4880p443.yaml",
     resolution: { width: 480, height: 800 },
     features: { psram: true, buzzer: false, buttons: false, lcd: true, lvgl: true, touch: true },
-    touch: { platform: "gt911", id: "device_touchscreen" }
+    touch: { platform: "gt911" }
   },
   guition_esp32_p4_jc8012p4a1c: {
     name: "Guition JC8012P4A1C 10.1\" 800x1280",
@@ -567,13 +562,12 @@ export const DEVICE_PROFILES = {
     board: "esp32-p4-evboard",
     displayPlatform: "mipi_dsi",
     displayModel: "JC8012P4A1",
-    displayId: "main_display",
-    touchscreenId: "device_touchscreen",
+    skipTouchTransformOverride: true,
     isPackageBased: true,
     hardwarePackage: "hardware/guition-esp32-p4-jc8012p4a1c.yaml",
     resolution: { width: 800, height: 1280 },
     features: { psram: true, buzzer: false, buttons: false, lcd: true, lvgl: true, touch: true },
-    touch: { platform: "gt911", id: "device_touchscreen" }
+    touch: { platform: "gt911" }
   },
   seeedstudio_reterminal_d1001: {
     name: "Seeed Studio reTerminal D1001 8\" 800x1280",
@@ -582,14 +576,13 @@ export const DEVICE_PROFILES = {
     board: "esp32-p4-evboard",
     displayPlatform: "mipi_dsi",
     displayModel: "SEEED-RETERMINAL-D1001",
-    displayId: "main_display",
-    touchscreenId: "device_touchscreen",
+    skipTouchTransformOverride: true,
     isPackageBased: true,
     isUntestedProfile: true,
     hardwarePackage: "hardware/seeedstudio-reterminal-d1001.yaml",
     resolution: { width: 800, height: 1280 },
     features: { psram: true, buzzer: false, buttons: false, lcd: true, lvgl: true, touch: true },
-    touch: { platform: "gsl3670", id: "device_touchscreen" }
+    touch: { platform: "gsl3670" }
   },
   elecrow_esp32_p4_9inch_v1_2: {
     name: "Elecrow ESP32-P4 9\" HMI 1024x600 (V1.2)",
@@ -611,13 +604,11 @@ export const DEVICE_PROFILES = {
     board: "esp32-s3-devkitc-1",
     displayPlatform: "mipi_rgb",
     displayModel: "ELECROW-ESP32-7INCH",
-    displayId: "my_display",
-    touchscreenId: "my_touchscreen",
     isPackageBased: true,
     hardwarePackage: "hardware/elecrow-esp32-7inch.yaml",
     resolution: { width: 800, height: 480 },
     features: { psram: true, buzzer: false, buttons: false, lcd: true, lvgl: true, touch: true },
-    touch: { platform: "gt911", id: "my_touchscreen" }
+    touch: { platform: "gt911" }
   },
   geekmagic_mini_esp8266: {
     name: "GeekMagic Mini (ESP8266)",

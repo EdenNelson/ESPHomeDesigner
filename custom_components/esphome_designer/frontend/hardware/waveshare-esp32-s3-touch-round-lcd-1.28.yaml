@@ -91,10 +91,12 @@ preferences:
   flash_write_interval: 5min
 
 spi:
+  id: spi_bus
   mosi_pin: $mosipin
   clk_pin: $clkpin
 
 i2c:
+  id: bus_a
   sda: $sdapin
   scl: $sclpin
 
@@ -107,13 +109,13 @@ touchscreen:
 output:
   - platform: ledc
     pin: $blpin
-    id: backlight_pwm
+    id: gpio_backlight_pwm
 
 light:
   - platform: monochromatic
-    output: backlight_pwm
+    output: gpio_backlight_pwm
     name: "Display Backlight"
-    id: back_light
+    id: display_backlight
     restore_mode: RESTORE_AND_ON
 
 display:

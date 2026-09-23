@@ -186,3 +186,23 @@ class HttpPanelFlowTests(unittest.IsolatedAsyncioTestCase):
             "id": "custom_touch",
             "interrupt_pin": "GPIO47",
         })
+        self.assertNotIn("displayId", tmpl)
+
+    async def test_hardware_templates_api_reports_display_id(self):
+        custom_profiles_dir = Path(self.hass.config.path("esphomedesigner_custom_profiles"))
+        custom_profiles_dir.mkdir(parents=True, exist_ok=True)
+        (custom_profiles_dir / "display_id_profile.yaml").write_text(
+            "# Name: Test Custom Display Id\n"
+            "display:\n"
+            "  - platform: waveshare_epaper\n"
+            "    id: panel\n",
+            encoding="utf-8",
+        )
+
+        client = await self._make_client(ReTerminalHardwareListView(self.hass))
+        auth = await client.get("/api/esphome_designer/hardware/templates", headers={"X-Test-Auth": "1"})
+        self.assertEqual(auth.status, 200)
+        data = await auth.json()
+        matching = [t for t in data.get("templates", []) if t.get("id") == "custom_display_id_profile"]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(matching[0]["displayId"], "panel")

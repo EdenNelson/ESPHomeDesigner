@@ -97,7 +97,7 @@ touchscreen:
             - light.turn_on: display_backlight
 
 spi:
-  id: quad_spi
+  id: spi_bus
   type: quad
   clk_pin: GPIO47
   data_pins: [21,48,40,39]

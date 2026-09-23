@@ -103,7 +103,7 @@ touchscreen:
             - light.turn_on: display_backlight
 
 spi:
-  - id: qspi_display
+  - id: spi_bus
     type: quad
     clk_pin: GPIO47
     data_pins: [21, 48, 40, 39]
@@ -111,7 +111,7 @@ spi:
 display:
   - id: my_display
     platform: qspi_dbi
-    spi_id: qspi_display
+    spi_id: spi_bus
     dimensions:
       height: 480
       width: 320

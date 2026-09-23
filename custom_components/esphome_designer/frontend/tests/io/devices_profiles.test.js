@@ -105,13 +105,12 @@ describe('built-in device profiles', async () => {
             board: 'esp32-p4-evboard',
             displayPlatform: 'mipi_dsi',
             displayModel: 'JC4880P443',
-            displayId: 'main_display',
-            touchscreenId: 'device_touchscreen',
+            skipTouchTransformOverride: true,
             hardwarePackage: 'hardware/guition-esp32-p4-jc4880p443.yaml',
             resolution: { width: 480, height: 800 }
         });
         expect(guitionP4.features.touch).toBe(true);
-        expect(guitionP4.touch.id).toBe('device_touchscreen');
+        expect(guitionP4.touch.platform).toBe('gt911');
         expect(devices.SUPPORTED_DEVICE_IDS).toContain('guition_esp32_p4_jc4880p443');
 
         expect(guitionP4Large).toMatchObject({
@@ -120,13 +119,12 @@ describe('built-in device profiles', async () => {
             board: 'esp32-p4-evboard',
             displayPlatform: 'mipi_dsi',
             displayModel: 'JC8012P4A1',
-            displayId: 'main_display',
-            touchscreenId: 'device_touchscreen',
+            skipTouchTransformOverride: true,
             hardwarePackage: 'hardware/guition-esp32-p4-jc8012p4a1c.yaml',
             resolution: { width: 800, height: 1280 }
         });
         expect(guitionP4Large.features.touch).toBe(true);
-        expect(guitionP4Large.touch.id).toBe('device_touchscreen');
+        expect(guitionP4Large.touch.platform).toBe('gt911');
         expect(devices.SUPPORTED_DEVICE_IDS).toContain('guition_esp32_p4_jc8012p4a1c');
 
         expect(geekMagic).toMatchObject({
@@ -268,13 +266,12 @@ describe('built-in device profiles', async () => {
             board: 'esp32-p4-evboard',
             displayPlatform: 'mipi_dsi',
             displayModel: 'SEEED-RETERMINAL-D1001',
-            displayId: 'main_display',
-            touchscreenId: 'device_touchscreen',
+            skipTouchTransformOverride: true,
             hardwarePackage: 'hardware/seeedstudio-reterminal-d1001.yaml',
             resolution: { width: 800, height: 1280 }
         });
         expect(profile.features.touch).toBe(true);
-        expect(profile.touch).toMatchObject({ platform: 'gsl3670', id: 'device_touchscreen' });
+        expect(profile.touch).toMatchObject({ platform: 'gsl3670' });
         expect(profile.isUntestedProfile).toBe(true);
         expect(devices.SUPPORTED_DEVICE_IDS).not.toContain('seeedstudio_reterminal_d1001');
     });

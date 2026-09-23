@@ -196,12 +196,15 @@ class ReTerminalHardwareListView(DesignerBaseView):
                     features["lvgl"] = True
 
                 data = None
+                display_id: str | None = None
                 try:
                     data = yaml.safe_load(content)
                     if data and "display" in data:
                         display = data["display"]
                         if isinstance(display, list) and len(display) > 0:
                             disp = display[0]
+                            if isinstance(disp.get("id"), str):
+                                display_id = disp["id"]
                             if "dimensions" in disp:
                                 width = disp["dimensions"].get("width", width)
                                 height = disp["dimensions"].get("height", height)
@@ -281,6 +284,9 @@ class ReTerminalHardwareListView(DesignerBaseView):
                 # would erase a built-in profile's hand-written touch block.
                 if touch:
                     template["touch"] = touch
+                # Same rule for the display id: only send what the recipe names.
+                if display_id:
+                    template["displayId"] = display_id
 
                 templates.append(template)
                 _LOGGER.debug("Loaded profile '%s' from %s", clean_id, yaml_file)

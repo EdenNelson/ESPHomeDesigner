@@ -50,6 +50,11 @@ describe('component id resolvers', () => {
         expect(resolveBacklightOutputId(profile)).toBe('bl_out_nested');
     });
 
+    it('default recipe-backed e-paper profiles to my_display', () => {
+        expect(resolveDisplayId({ isPackageBased: true, features: { epaper: true } })).toBe('my_display');
+        expect(resolveDisplayId({ features: { epaper: true } })).toBe('epaper_display');
+    });
+
     it('exposes a frozen standard id table', () => {
         expect(Object.isFrozen(STANDARD_COMPONENT_IDS)).toBe(true);
     });

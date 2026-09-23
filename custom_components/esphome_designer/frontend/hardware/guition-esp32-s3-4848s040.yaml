@@ -104,7 +104,7 @@ touchscreen:
             - light.turn_on: display_backlight
 
 spi:
-  - id: lcd_spi
+  - id: spi_bus
     clk_pin: GPIO48
     mosi_pin: GPIO47
 

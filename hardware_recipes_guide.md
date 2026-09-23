@@ -91,6 +91,21 @@ The Designer looks for specific metadata in the form of comments at the top of y
 > [!IMPORTANT]
 > Ensure your `display` platform and `id` match what you expect. The Designer will use whatever display ID you define in the recipe.
 
+### Standard Component IDs
+
+The Designer's generated YAML refers to hardware components by id: LVGL `displays:`/`touchscreens:`, backlight dimming and wake-up, and the `i2c_id` of on-device sensors. Use these ids in your recipe so everything connects without extra setup. Every bundled recipe uses them, and `tests/io/hardware_recipe_ids.test.js` checks this.
+
+| Component | Standard id | Notes |
+| :--- | :--- | :--- |
+| Display | `my_display` | Also for e-paper recipes. |
+| Touchscreen | `my_touchscreen` | |
+| I2C buses | `bus_a`, `bus_b`, ... | In the order they are declared. On-device sensors attach to `bus_a`. |
+| SPI bus | `spi_bus` | The first SPI bus. Extra buses can keep role-based names (e.g. `touch`). |
+| Backlight light | `display_backlight` | The `light:` that dimming and wake-up turn on and off. |
+| Backlight output | `gpio_backlight_pwm` | The `output:` that drives the backlight light. Switch-driven backlights use a template output named `fake_backlight_output`. |
+
+The Designer reads the display and touchscreen ids from your recipe, so other names still work there. For the buses and the backlight, use the standard ids.
+
 ---
 
 ## 🚀 Uploading and Using

@@ -87,12 +87,12 @@ esp32_hosted:
   active_high: true
 
 i2c:
-  - id: i2c_bus
+  - id: bus_a
     sda: GPIO37
     scl: GPIO38
     scan: false
     frequency: 400kHz
-  - id: i2c_system
+  - id: bus_b
     sda: GPIO20
     scl: GPIO21
     scan: false
@@ -100,7 +100,7 @@ i2c:
 
 xl9535:
   - id: io_expander
-    i2c_id: i2c_system
+    i2c_id: bus_b
     address: 0x20
 
 output:
@@ -117,8 +117,8 @@ light:
 
 touchscreen:
   - platform: gsl3670
-    id: device_touchscreen
-    i2c_id: i2c_bus
+    id: my_touchscreen
+    i2c_id: bus_a
     model: SEEED-RETERMINAL-D1001
     update_interval: 16ms
     on_release:
@@ -131,7 +131,7 @@ touchscreen:
 
 display:
   - platform: mipi_dsi
-    id: main_display
+    id: my_display
     model: SEEED-RETERMINAL-D1001
     byte_order: little_endian
     rotation: 90
@@ -143,13 +143,13 @@ audio_dac:
   - platform: es8311
     id: es8311_dac
     address: 0x18
-    i2c_id: i2c_system
+    i2c_id: bus_b
 
 audio_adc:
   - platform: es7210
     id: es7210_adc
     address: 0x40
-    i2c_id: i2c_system
+    i2c_id: bus_b
 
 i2s_audio:
   - id: i2s_speaker_bus

@@ -124,7 +124,7 @@ display:
     });
 
     it('parses the GeekMagic Pro ESP32 recipe with its required MIPI-SPI settings', () => {
-        expect(geekMagicProYaml).toContain('spi_id: spihwd');
+        expect(geekMagicProYaml).toContain('spi_id: spi_bus');
         expect(geekMagicProYaml).toContain('data_rate: 40MHz');
         expect(geekMagicProYaml).toContain('spi_mode: MODE3');
         expect(geekMagicProYaml).toContain('invert_colors: true');
@@ -164,9 +164,9 @@ display:
         expect(guitionP4Yaml).toContain('mode: hex');
         expect(guitionP4Yaml).toContain('speed: 200MHz');
         expect(guitionP4Yaml).toContain('pin: GPIO23');
-        expect(guitionP4Yaml).toContain('id: main_display');
+        expect(guitionP4Yaml).toContain('id: my_display');
         expect(guitionP4Yaml).toContain('reset_pin: GPIO27');
-        expect(guitionP4Yaml).toContain('id: device_touchscreen');
+        expect(guitionP4Yaml).toContain('id: my_touchscreen');
         expect(guitionP4Yaml).toContain('audio_dac:');
 
         const profile = parseHardwareRecipeClientSide(guitionP4Yaml, 'guition-esp32-p4-jc4880p443.yaml');
@@ -189,8 +189,8 @@ display:
         expect(guitionP4LargeYaml).toContain('speed: 200MHz');
         expect(guitionP4LargeYaml).toContain('model: JC8012P4A1');
         expect(guitionP4LargeYaml).toContain('rotation: 90');
-        expect(guitionP4LargeYaml).toContain('id: main_display');
-        expect(guitionP4LargeYaml).toContain('id: device_touchscreen');
+        expect(guitionP4LargeYaml).toContain('id: my_display');
+        expect(guitionP4LargeYaml).toContain('id: my_touchscreen');
         expect(guitionP4LargeYaml).toContain('audio_dac:');
 
         const profile = parseHardwareRecipeClientSide(guitionP4LargeYaml, 'guition-esp32-p4-jc8012p4a1c.yaml');
@@ -215,8 +215,8 @@ display:
         expect(reterminalD1001Yaml).toContain('platform: gsl3670');
         expect(reterminalD1001Yaml).toContain('model: SEEED-RETERMINAL-D1001');
         expect(reterminalD1001Yaml).toContain('pin: GPIO14');
-        expect(reterminalD1001Yaml).toContain('id: main_display');
-        expect(reterminalD1001Yaml).toContain('id: device_touchscreen');
+        expect(reterminalD1001Yaml).toContain('id: my_display');
+        expect(reterminalD1001Yaml).toContain('id: my_touchscreen');
         expect(reterminalD1001Yaml).toContain('audio_dac:');
         expect(reterminalD1001Yaml).toContain('audio_adc:');
 
@@ -281,8 +281,8 @@ display:
         expect(profile.features.lcd).toBe(false);
         expect(profile.touch).toEqual({
             platform: 'gt911',
-            id: 'device_touchscreen',
-            i2c_id: 'i2c_touch',
+            id: 'my_touchscreen',
+            i2c_id: 'bus_b',
             interrupt_pin: 'GPIO21',
             reset_pin: 'GPIO41'
         });

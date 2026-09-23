@@ -316,7 +316,7 @@ display:
 
     it('ships the Tab5 esp32_hosted active_high flag and a display_backlight light (#490)', () => {
       expect(m5stackTab5Yaml).toMatch(/esp32_hosted:\n(?: {2}.*\n)* {2}active_high: true/);
-      expect(m5stackTab5Yaml).toContain('id: backlight_pwm');
+      expect(m5stackTab5Yaml).toContain('id: gpio_backlight_pwm');
       expect(m5stackTab5Yaml).toMatch(/light:\n(?: {2}.*\n)* {4}id: display_backlight/);
     });
   });

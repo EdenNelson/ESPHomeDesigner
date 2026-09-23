@@ -51,7 +51,8 @@ preferences:
   flash_write_interval: 5min
 
 i2c:
-  - sda: 27
+  - id: bus_a
+    sda: 27
     scl: 22
 
 output:
@@ -87,7 +88,7 @@ light:
     restore_mode: ALWAYS_OFF
 
 spi:
-  - id: tft
+  - id: spi_bus
     clk_pin: 14
     mosi_pin: 13
     miso_pin:
@@ -126,7 +127,7 @@ display:
   - id: my_display
     platform: ili9xxx
     model: ILI9341
-    spi_id: tft
+    spi_id: spi_bus
     cs_pin:
       number: 15
       ignore_strapping_warning: true

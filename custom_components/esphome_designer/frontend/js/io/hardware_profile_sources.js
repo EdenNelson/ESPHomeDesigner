@@ -65,6 +65,7 @@ export const hardwareProfileRuntime = {
  *   board?: string;
  *   displayPlatform?: string;
  *   displayModel?: string;
+ *   displayId?: string;
  *   colorPalette?: string;
  *   colorOrder?: string;
  *   updateInterval?: string;
@@ -160,7 +161,8 @@ export function parseHardwareRecipeClientSide(yaml, filename) {
     const invertedMatch = yaml.match(/#\s*Inverted:\s*(true|yes|1)/i);
     const isInverted = !!invertedMatch;
 
-    const displayBlock = extractTopLevelYamlBlock(yaml, 'display') || yaml;
+    const ownDisplayBlock = extractTopLevelYamlBlock(yaml, 'display');
+    const displayBlock = ownDisplayBlock || yaml;
     const platformMatch = displayBlock.match(/^\s*-\s*platform:\s*([a-z0-9_]+)/m) || displayBlock.match(/^\s*platform:\s*([a-z0-9_]+)/m);
     const displayPlatform = platformMatch ? platformMatch[1].trim() : undefined;
 
@@ -205,6 +207,10 @@ export function parseHardwareRecipeClientSide(yaml, filename) {
 
     const boardCommentMatch = yaml.match(/#\s*Board:\s*(.*)/i);
     if (boardCommentMatch) board = boardCommentMatch[1].trim();
+
+    // The display's own id sits at list-item level ("  - id:" or "    id:").
+    const displayIdMatch = ownDisplayBlock.match(/^ {2}(?:- | {2})id:\s*([A-Za-z0-9_]+)/m);
+    const displayId = displayIdMatch ? displayIdMatch[1] : undefined;
 
     const colorPaletteMatch = displayBlock.match(/^\s*color_palette:\s*(\S+)/m);
     const colorPalette = colorPaletteMatch ? colorPaletteMatch[1].trim() : undefined;
@@ -251,6 +257,7 @@ export function parseHardwareRecipeClientSide(yaml, filename) {
         board,
         displayPlatform,
         displayModel,
+        displayId,
         colorPalette,
         colorOrder,
         updateInterval,

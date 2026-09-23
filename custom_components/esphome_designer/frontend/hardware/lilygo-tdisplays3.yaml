@@ -120,12 +120,12 @@ binary_sensor:
 output:
   - platform: ledc
     pin: GPIO38
-    id: GPIO38
+    id: gpio_backlight_pwm
     frequency: 2000
 
 light:
   - platform: monochromatic
-    output: GPIO38
+    output: gpio_backlight_pwm
     name: Display Backlight
     icon: mdi:lightbulb-on
     id: display_backlight

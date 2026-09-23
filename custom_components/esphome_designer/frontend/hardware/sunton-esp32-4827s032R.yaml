@@ -86,7 +86,7 @@ light:
     restore_mode: ALWAYS_ON
     
 spi:
-  - id: spi_touch
+  - id: spi_bus
     clk_pin: 12
     mosi_pin: 11
     miso_pin: 13 
@@ -94,7 +94,7 @@ spi:
 touchscreen:
   - id: my_touchscreen
     platform: xpt2046
-    spi_id: spi_touch
+    spi_id: spi_bus
     cs_pin: 38
     interrupt_pin: 18
     update_interval: 100ms

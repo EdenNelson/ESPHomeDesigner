@@ -62,18 +62,18 @@ psram: {mode: hex, speed: 200MHz}
 output:
   - platform: ledc
     pin: GPIO22
-    id: backlight_pwm
+    id: gpio_backlight_pwm
 
 light:
   - platform: monochromatic
     name: "Backlight"
-    output: backlight_pwm
+    output: gpio_backlight_pwm
     id: display_backlight
     restore_mode: ALWAYS_ON
     internal: true
 
 i2c:
-  - {id: bsp_bus, sda: GPIO31, scl: GPIO32, frequency: 400kHz}
+  - {id: bus_a, sda: GPIO31, scl: GPIO32, frequency: 400kHz}
 
 pi4ioe5v6408:
   - {id: pi4ioe1, address: 0x43}
@@ -93,6 +93,6 @@ display:
 touchscreen:
   - platform: st7123
     id: my_touchscreen
-    i2c_id: bsp_bus
+    i2c_id: bus_a
     interrupt_pin: GPIO23
     reset_pin: {pi4ioe5v6408: pi4ioe1, number: 5}

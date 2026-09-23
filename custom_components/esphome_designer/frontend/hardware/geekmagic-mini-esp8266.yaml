@@ -41,13 +41,13 @@ esphome: {min_version: 2025.5.0}
 
 esp8266: {board: esp01_1m}
 
-spi: {clk_pin: GPIO14, mosi_pin: GPIO13, interface: hardware, id: spihwd}
+spi: {clk_pin: GPIO14, mosi_pin: GPIO13, interface: hardware, id: spi_bus}
 
 display:
   - platform: mipi_spi
     id: my_display
     model: ST7789V
-    spi_id: spihwd
+    spi_id: spi_bus
     dimensions: {height: 240, width: 240, offset_height: 0, offset_width: 0}
     buffer_size: 12.5%
     color_depth: 16
@@ -64,12 +64,12 @@ output:
   - platform: esp8266_pwm
     pin: GPIO05
     frequency: 1000Hz
-    id: backlight_pwm
+    id: gpio_backlight_pwm
     inverted: true
 
 light:
   - platform: monochromatic
-    output: backlight_pwm
+    output: gpio_backlight_pwm
     name: "Backlight"
-    id: backlight
+    id: display_backlight
     restore_mode: ALWAYS_ON

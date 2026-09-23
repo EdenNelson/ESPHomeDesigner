@@ -69,18 +69,18 @@ psram:
   speed: 80MHz
 
 spi:
-  - id: epaper_spi_bus
+  - id: spi_bus
     clk_pin: GPIO13
     mosi_pin: GPIO14
     miso_pin: GPIO12
 
 i2c:
-  - id: i2c_sensors
+  - id: bus_a
     sda: GPIO1
     scl: GPIO0
     scan: false
     frequency: 400kHz
-  - id: i2c_touch
+  - id: bus_b
     sda: GPIO3
     scl: GPIO2
     scan: false
@@ -111,9 +111,9 @@ switch:
 
 touchscreen:
   - platform: gt911
-    id: device_touchscreen
+    id: my_touchscreen
     display: my_display
-    i2c_id: i2c_touch
+    i2c_id: bus_b
     interrupt_pin: GPIO21
     reset_pin: GPIO41
     transform:

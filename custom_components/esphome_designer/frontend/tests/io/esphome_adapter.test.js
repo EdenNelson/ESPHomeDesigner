@@ -377,6 +377,9 @@ text_sensor:
     });
 
     it('uses package profile display and touchscreen ids in generated LVGL blocks', async () => {
+        // A custom recipe with non-standard ids, served through the HA package endpoint.
+        mockHasHaBackend.mockReturnValue(true);
+        mockHaApiBase.mockReturnValue('/api/esphome_designer');
         Object.assign(mockDeviceProfiles, {
             guition_esp32_p4_jc4880p443: {
                 name: 'Guition JC4880P443 4.3" 480x800',

@@ -46,6 +46,7 @@ esp32:
     type: esp-idf
 
 spi:
+  id: spi_bus
   clk_pin: GPIO13
   mosi_pin: GPIO14
 

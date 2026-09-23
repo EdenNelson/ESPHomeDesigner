@@ -22,11 +22,14 @@ export const STANDARD_COMPONENT_IDS = Object.freeze({
  * @returns {string}
  */
 export function resolveDisplayId(profile) {
+    // Hardware recipes (package-based profiles) always name their display
+    // my_display, including e-paper recipes; only JS-generated e-paper
+    // profiles use epaper_display.
     const isLcd = !!(profile?.features && (profile.features.lcd || profile.features.oled));
     return profile?.displayId
         || profile?.display_id
         || profile?.display?.id
-        || (isLcd ? STANDARD_COMPONENT_IDS.display : STANDARD_COMPONENT_IDS.epaperDisplay);
+        || (isLcd || profile?.isPackageBased ? STANDARD_COMPONENT_IDS.display : STANDARD_COMPONENT_IDS.epaperDisplay);
 }
 
 /**
