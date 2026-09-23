@@ -2,4 +2,4 @@
 
 - Before finishing a change that touches `custom_components/esphome_designer/frontend/**`, `vite.config.js`, `custom_components/esphome_designer/frontend/vite.config.js`, or `package.json`, run `npm run verify:dist` and keep `custom_components/esphome_designer/frontend/dist` in sync with source changes.
 - Before finalizing non-trivial changes, run `npm run verify:pre-push -- --skip-hassfest` at minimum.
-- If Docker is available, prefer `npm run verify:pre-push` so Hassfest is checked locally before push.
+- If Docker is available, prefer `npm run verify:pre-push` so Hassfest is checked locally before push.- Bundled hardware recipes (`custom_components/esphome_designer/frontend/hardware/*.yaml`) must use the standard component ids listed in `hardware_recipes_guide.md` (Standard Component IDs), enforced by `tests/io/hardware_recipe_ids.test.js`. When adding a board from a vendor or community config, rename its ids to the standard ones instead of adding per-profile id overrides, and reference hardware ids in generators and plugins through `js/io/display_ids.js` rather than hardcoding them.
