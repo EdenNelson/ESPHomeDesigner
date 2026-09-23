@@ -17,9 +17,20 @@ This came up while planning a move of the board definitions to ESPHome [`package
 | Display | `my_display` (22), `main_display` (3) | `online_image` plugin: `my_display` / `epaper_display` |
 | Touchscreen | `my_touchscreen` (17), `device_touchscreen` (4) | `yaml_merger.js` touch-transform rewrite matches only `my_touchscreen` |
 | I2C bus | `bus_a` (14), `i2c_bus` (3), `i2c_system`, `i2c_sensors`, `i2c_touch`, `bsp_bus`, none (3) | on-device sensor plugins, SHT/AXP generators: `bus_a` |
-| SPI bus | 11 different names, or none | — |
+| SPI bus | 8 different names (`lcd_spi`, `spihwd`, `tft`, `touch`, `quad_spi`, `qspi_display`, `spi_touch`, `epaper_spi_bus`), or none | — |
 | Backlight light | `display_backlight` (19), `backlight` (2), `back_light` (2) | LVGL `on_idle`, touch wake-up, recipe overrides: `display_backlight` |
 | Backlight output | `gpio_backlight_pwm` (14), `backlight_pwm` (5), `ledc_gpio45`, `GPIO38` | page-switch / sleep scripts: `id(backlight_pwm)` |
+
+## Where the names come from
+
+None of the differing names appear to be deliberate:
+
+- The 14 recipes marked `# BASED ON: https://github.com/agillis/esphome-modular-lvgl-buttons` share that project's naming (`my_display`, `my_touchscreen`, `bus_a`, `display_backlight`, `gpio_backlight_pwm`). That's where the majority names come from.
+- Boards added later from other vendor or community configs (the Guition P4 boards, reTerminal D1001 and Sticky, Elecrow P4, Waveshare Round 1.28") kept their source's names.
+- Later code accommodated those names instead of normalizing them: the per-profile `displayId`/`touchscreenId` overrides and `display_ids.js`, added in the same change as the first P4 recipe.
+- `id(backlight_pwm)` has been in the page-switch script since the initial commit, before any recipe defined it.
+
+So settling on one set changes where the names came from, not a design decision.
 
 ## Resulting bugs
 

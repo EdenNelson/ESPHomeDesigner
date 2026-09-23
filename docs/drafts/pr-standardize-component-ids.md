@@ -17,6 +17,8 @@ The bundled hardware recipes and the JS generators use different IDs for the sam
 - routes every hardcoded reference through the ID lookup in `js/io/display_ids.js`, so custom profiles with their own IDs still work,
 - adds a test that keeps the bundled recipes consistent.
 
+The differing names aren't a design choice being overridden. Each board kept the names of the vendor or community config it was copied from (details in the issue), so this settles on one set.
+
 | Component | Standard ID |
 |---|---|
 | Display | `my_display` |
@@ -42,8 +44,9 @@ Each commit can be reviewed on its own:
 1. **Extend component id resolvers to buses and backlight.** Adds `STANDARD_COMPONENT_IDS` and resolvers for the I2C/SPI bus and the backlight light/output. No output changes.
 2. **Route hardcoded component ids through the id resolvers.** Updates the generators, `yaml_merger.js`, LVGL export, scripts, the `on_boot` hints, and the `online_image` / on-device sensor plugins.
 3. **Standardize component ids in the bundled hardware recipes.** Renames IDs in 19 recipes, cleans up the `devices.js` overrides that pointed at old names, adds display-ID extraction in `api/hardware.py` and `hardware_profile_sources.js`, and documents the IDs in `hardware_recipes_guide.md`.
-4. **Add conformance test for hardware recipe component ids.** `tests/io/hardware_recipe_ids.test.js` loads every bundled recipe and checks the standard IDs, that each top-level ID is defined once, the offline-parser resolution, and that no retired ID is referenced. It fails 45 checks against the old recipes.
+4. **Add conformance test for hardware recipe component ids.** `tests/io/hardware_recipe_ids.test.js` loads every bundled recipe and checks the standard IDs, that each top-level ID is defined once, the offline-parser resolution, and that no retired ID is referenced. It fails 49 of its 153 checks against the old recipes.
 5. **Rebuild frontend dist.**
+6. **Document the component id convention in the agent instructions.** Adds one line to `.github/copilot-instructions.md` pointing at the standard IDs and the conformance test. It's easy to drop if unwanted.
 
 ## Behaviour notes for review
 
@@ -51,6 +54,7 @@ Each commit can be reviewed on its own:
 - **Custom uploaded recipes:** the touch transform rewrite now follows the touchscreen ID the recipe declares, rather than only an exact `my_touchscreen`.
 - **E-paper display ID:** JS-generated e-paper profiles still use `epaper_display`. Moving them to `my_display` would change their output, so it's left as an open question in the issue.
 - **Multi-bus boards:** in declaration order, the D1001 buses become `bus_a` (touch) and `bus_b` (system: IO expander, audio). The Sticky's become `bus_a` (sensors) and `bus_b` (touch). The Sunton 2432S028(R) `tft` SPI bus becomes `spi_bus`, and its `touch` bus is unchanged.
+- **Keeping a link to the source config:** keeping a vendor's IDs doesn't make it easier to diff against their upstream config. The recipes have already diverged (placeholders, commented-out system sections, pasted Designer blocks). If traceability matters, a `# SOURCE: <url> (ids normalized)` header line keeps it without the naming drift.
 - **User impact:** only hand-written lambdas in users' own configs that reference an old recipe ID (e.g. `id(main_display)`) need updating. The Designer regenerates its own output.
 
 ## Testing
@@ -58,7 +62,18 @@ Each commit can be reviewed on its own:
 - `npm run quality` passes: ESLint, 2,036 Vitest tests, TypeScript base + strict, build, coverage and per-file coverage minimums, schema hash, bundle size. SourceLines is at WARN, the same as on `main`.
 - `npm run verify:dist` passes: dist matches sources.
 - `npm run python:test` passes. The new `test_hardware_templates_api_reports_display_id` joins the existing HTTP tests, which are skipped locally without the aiohttp/Home Assistant dev dependencies. I checked the same code path against all bundled recipes with a stubbed harness.
-- Not yet done: `esphome config` / compile on physical boards. Feedback from owners of the renamed boards would be welcome.
+- **`esphome config` (ESPHome 2026.9.0) on every bundled recipe, `main` vs this branch.**
+  - Each recipe was prepared the way the Designer uses it: an empty lambda in direct mode, or in LVGL mode no lambda plus an `lvgl:` block bound to `my_display`/`my_touchscreen`.
+  - A probe package references the IDs the Designer's generated YAML uses: `component.update: my_display`, `light.turn_on: display_backlight`, a touchscreen binary sensor on `my_touchscreen`, and a sensor on `bus_a`.
+  - Results:
+    - 7 boards go from FAIL to PASS: Elecrow P4 9", GeekMagic Mini, Guition JC4880P443, reTerminal Sticky, Sunton 2432S028 and 2432S028R, and Waveshare Round 1.28". On `main` they failed with `Couldn't find ID 'my_display' / 'my_touchscreen' / 'bus_a' / 'display_backlight'`, and ESPHome itself suggested the old names ("These IDs look similar: main_display").
+    - 3 boards pass on both.
+    - None go from PASS to FAIL.
+    - On Guition JC8012P4A1C and reTerminal D1001, `main`'s missing-ID errors are gone. They now reach an older, unrelated error (see Follow-ups).
+    - The other 13 boards fail identically on `main`, for reasons unrelated to IDs.
+    - Missing-ID errors: 9 boards on `main`, 0 on this branch.
+  - The harness is on the planning branch (`docs/drafts/validate_recipes.py`).
+- Not done: compiling and flashing physical boards. Feedback from owners of the renamed boards would be welcome.
 
 ## Follow-ups (not in this PR)
 
@@ -67,6 +82,15 @@ Each commit can be reviewed on its own:
 - `waveshare-esp32-s3-touch-round-lcd-1.28.yaml`: `substitutions:` gets commented out but its `$var` references remain.
 - The on-device humidity/temperature plugins emit `address:`/`i2c_id:` for `shtcx` at the wrong indentation.
 - The sleep-schedule backlight block is wrapped in `#ifdef USE_BACKLIGHT`, which ESPHome never defines, so it's always compiled out.
+
+Found by the `esphome config` run, all older than this PR (they fail identically on `main`, or were hidden there behind the ID errors):
+
+- **LVGL mode keeps a recipe's own display `rotation:`**, which ESPHome 2026.4+ rejects ("not compatible with LVGL"). The Designer skips injecting rotation in LVGL mode but doesn't remove a hardcoded one. Affects Guition JC8012P4A1C (90), reTerminal D1001 (90), Guition JC4827W543 (180) and JC8048W535 (270).
+- **`mipi_rgb` now requires `model:`** (current ESPHome). Affects Elecrow 7", Guition JC8048W550, Sunton 4827S032R, 8048S050 and 8048S070, and Waveshare Touch LCD 4.3.
+- **Guition JC4848S040:** `on_release` is indented under `transform:`.
+- **M5Stack Tab5:** `mipi_dsi` requires `esp_ldo`, which the recipe doesn't configure.
+- **LILYGO T-Display S3:** the `i80` component no longer exists in current ESPHome.
+- **Waveshare Universal e-Paper 7.5" v2:** the `esphome.project.name` needs a `namespace.name` form.
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)
 

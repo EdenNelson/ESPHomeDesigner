@@ -33,7 +33,7 @@ The codebase already uses the word "package" (`isPackageBased`, `hardwarePackage
 | I2C bus | `bus_a` (14), `i2c_bus` (3), `i2c_system`/`i2c_sensors`/`i2c_touch`/`bsp_bus`, 3 with no ID | Sensor plugins and the SHT/AXP generators use `bus_a` | On-device sensors break on P4 / Tab5 |
 | Backlight light | `display_backlight` (19), `backlight` (2), `back_light` (2) | 4 call sites hardcode `display_backlight` | Dim-after-timeout and wake-on-touch break on elecrow-p4, waveshare-round, geekmagic-mini and sensecap |
 | Backlight output | `gpio_backlight_pwm` (14), `backlight_pwm` (5), others | `yaml_generator_scripts.js` uses `id(backlight_pwm)`, which the JS generators never emit | Backlight scripts are wrong on some boards |
-| SPI bus | 11 different names; JS profiles emit `spi_bus` | — | No consistent way to reference it |
+| SPI bus | 8 different names (2 recipes with none); JS profiles emit `spi_bus` | — | No consistent way to reference it |
 
 **Other defects found along the way**
 
@@ -131,8 +131,11 @@ Done, as five commits:
    - Recipe-backed profiles default to `my_display`, and the backend and offline parser report the recipe's display ID.
    - The Guition P4 ×2, D1001 and Sticky set `skipTouchTransformOverride`, so their tuned touch config is unchanged.
    - Document the IDs in `hardware_recipes_guide.md`.
-4. Conformance test `tests/io/hardware_recipe_ids.test.js` (fails 45 checks against the old recipes).
+4. Conformance test `tests/io/hardware_recipe_ids.test.js` (fails 49 of its 153 checks against the old recipes).
 5. Rebuilt `dist/`, which CI's freshness check requires.
+6. One line in `.github/copilot-instructions.md` pointing agent tooling at the ID convention and the conformance test.
+
+Validated with `esphome config` (2026.9.0) on every recipe, `main` vs branch, using `docs/drafts/validate_recipes.py`. Results: 7 boards go from FAIL to PASS, 3 pass on both, and 0 go from PASS to FAIL. Missing-ID errors: 9 boards on `main`, 0 on the branch.
 
 Multi-bus rule: I2C buses are `bus_a`, `bus_b`, … in declaration order. The first SPI bus is `spi_bus`, and extra SPI buses keep role-based names.
 
@@ -146,6 +149,13 @@ Moved out of PR 1 to keep it focused:
   - the `shtcx` indentation in the on-device sensor plugins,
   - the never-defined `USE_BACKLIGHT` guard.
 - **E-paper `epaper_display` → `my_display`:** waits for the maintainer's answer (open question 3).
+- **Older recipe bugs found by `esphome config`:**
+  - LVGL mode keeps a recipe's own display `rotation:`, which ESPHome 2026.4+ rejects (4 boards).
+  - `mipi_rgb` now requires `model:` (6 boards).
+  - Guition JC4848S040: `on_release` is indented under `transform:`.
+  - M5Stack Tab5: `mipi_dsi` requires `esp_ldo`.
+  - LILYGO T-Display S3: the `i80` component no longer exists.
+  - Waveshare e-Paper 7.5": the project name needs a `namespace.name` form.
 
 ### PR 2: Normalize device IDs and recipe filenames
 
