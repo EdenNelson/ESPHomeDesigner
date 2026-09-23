@@ -1,6 +1,6 @@
 # Plan: Standardize Device Profiles and Move Hardware to ESPHome Packages
 
-Status: **Draft for discussion**. It is linked from the upstream discussion thread.
+Status: **Draft for discussion**. It is linked from the upstream discussion thread. PR 1 is implemented on branch `standardize-component-ids`.
 
 ## Goal
 
@@ -117,20 +117,35 @@ Display-name format: `<Vendor> <Product> <Model> <size>" <WxH> (<variant>)`, e.g
 
 ## PR series
 
-### PR 1: Standardize component IDs and display names
+### PR 1: Standardize component IDs (done: branch `standardize-component-ids`)
 
-Changes nothing that users have saved. Fixes the bugs listed above.
+Changes nothing that users have saved. Fixes the bugs listed above. Drafts of the upstream issue and PR description are in `docs/drafts/`.
 
-- Add a written ID convention (`docs/` plus an update to `hardware_recipes_guide.md`).
-- Extend `js/io/display_ids.js` into an ID lookup for every standard ID (display, touch, I2C, SPI, backlight light/output). Replace all hardcoded IDs in generators, `yaml_merger.js`, scripts, LVGL export and feature plugins with calls to it.
-- Rename the IDs in the recipes that don't match; remove the per-profile `displayId`/`touchscreenId` overrides this makes redundant.
-- Fix the waveshare-round recipe so it works without `substitutions:` (or resolve substitutions before commenting them out).
-- Detect flow-style one-line top-level sections in `sanitizePackageContent` / `mergeYamlSections`.
-- Normalize device ID case in the backend (`api/hardware.py`) so it matches the frontend.
-- Make display names follow the vendor table and format above, choose one source for the name (JS profile vs recipe header), and add the `vendor`/`model` fields.
-- Tests:
-  - A new conformance test that loads every recipe and checks it uses the standard IDs.
-  - Update the tests that assert old IDs (`package_processor.test.js`, `hardware_profile_sources.test.js`, `esphome_adapter.test.js`, `online_image_plugin.test.js`, the E1001 round-trip snapshot).
+Done, as five commits:
+
+1. Extend `js/io/display_ids.js` into an ID lookup for every standard ID (display, touch, I2C, SPI, backlight light/output). No output change.
+2. Replace the hardcoded IDs in the generators, `yaml_merger.js`, scripts, LVGL export and feature plugins with calls to it. Also:
+   - the scripts drive the backlight light instead of the undefined `backlight_pwm`,
+   - the custom recipe builder emits standard IDs.
+3. Rename the IDs in 19 recipes and remove the `devices.js` overrides this makes redundant. Also:
+   - Recipe-backed profiles default to `my_display`, and the backend and offline parser report the recipe's display ID.
+   - The Guition P4 ×2, D1001 and Sticky set `skipTouchTransformOverride`, so their tuned touch config is unchanged.
+   - Document the IDs in `hardware_recipes_guide.md`.
+4. Conformance test `tests/io/hardware_recipe_ids.test.js` (fails 45 checks against the old recipes).
+5. Rebuilt `dist/`, which CI's freshness check requires.
+
+Multi-bus rule: I2C buses are `bus_a`, `bus_b`, … in declaration order. The first SPI bus is `spi_bus`, and extra SPI buses keep role-based names.
+
+Moved out of PR 1 to keep it focused:
+
+- **Display names (PR 1b):** the vendor table and format above, one source for the name, and `vendor`/`model` fields.
+- **Small fixes PR:**
+  - device-ID case normalization in the backend,
+  - the waveshare-round `substitutions:` bug,
+  - flow-style top-level sections,
+  - the `shtcx` indentation in the on-device sensor plugins,
+  - the never-defined `USE_BACKLIGHT` guard.
+- **E-paper `epaper_display` → `my_display`:** waits for the maintainer's answer (open question 3).
 
 ### PR 2: Normalize device IDs and recipe filenames
 
