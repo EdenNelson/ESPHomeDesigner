@@ -1,3 +1,5 @@
+import { STANDARD_COMPONENT_IDS, resolveI2cBusId } from './display_ids.js';
+
 /**
  * @param {any} profile
  * @param {string[]} [widgetSensorLines]
@@ -5,7 +7,7 @@
  * @param {any[]} [_allWidgets]
  * @returns {string[]}
  */
-export function generateSensorSection(profile, widgetSensorLines = [], _displayId = "my_display", _allWidgets = [], options = {}) {
+export function generateSensorSection(profile, widgetSensorLines = [], _displayId = STANDARD_COMPONENT_IDS.display, _allWidgets = [], options = {}) {
     /** @type {string[]} */
     const lines = [];
     if (!profile) return lines;
@@ -73,7 +75,7 @@ export function generateSensorSection(profile, widgetSensorLines = [], _displayI
     if (hasShtc3) {
         lines.push("  - platform: shtcx");
         lines.push("    id: shtc3_sensor");
-        lines.push("    i2c_id: bus_a");
+        lines.push(`    i2c_id: ${resolveI2cBusId(profile)}`);
         lines.push("    address: 0x70");
         lines.push("    temperature:");
         lines.push("      name: \"Temperature\"");

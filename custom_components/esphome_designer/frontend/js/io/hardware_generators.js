@@ -8,7 +8,14 @@ import {
     generateBinarySensorSection as generateBinarySensorSectionHelper,
     generateButtonSection as generateButtonSectionHelper
 } from './hardware_generators_sections.js';
-import { resolveDisplayId } from './display_ids.js';
+import {
+    STANDARD_COMPONENT_IDS,
+    resolveDisplayId,
+    resolveI2cBusId,
+    resolveSpiBusId,
+    resolveBacklightId,
+    resolveBacklightOutputId
+} from './display_ids.js';
 
 /** @typedef {Record<string, any>} ProfileLike */
 /** @typedef {{ orientation?: string, refreshInterval?: number, lcdEcoStrategy?: string }} LayoutLike */
@@ -24,6 +31,8 @@ export function generateBacklightSection(profile) {
     if (!profile || !profile.backlight) return lines;
 
     const bl = profile.backlight;
+    const lightId = resolveBacklightId(profile);
+    const outputId = resolveBacklightOutputId(profile);
 
     // Output component for the backlight pin
     if (bl.platform === "ledc" || bl.platform === "gpio" || bl.platform === "switch") {
@@ -51,7 +60,7 @@ export function generateBacklightSection(profile) {
         } else {
             lines.push("output:");
             lines.push(`  - platform: ${bl.platform}`);
-            lines.push(`    id: gpio_backlight_pwm`);
+            lines.push(`    id: ${outputId}`);
             lines.push(`    pin: ${bl.pin}`);
             if (bl.frequency) lines.push(`    frequency: ${bl.frequency}`);
             lines.push("");
@@ -62,7 +71,7 @@ export function generateBacklightSection(profile) {
     lines.push("light:");
     lines.push("  - platform: monochromatic");
     lines.push("    name: Display Backlight");
-    lines.push("    id: display_backlight");
+    lines.push(`    id: ${lightId}`);
     lines.push("    restore_mode: ALWAYS_ON");
 
     if (bl.platform === "switch") {
@@ -83,7 +92,7 @@ export function generateBacklightSection(profile) {
         lines.push("          else:");
         lines.push("            - switch.turn_off: lcdbacklight");
     } else {
-        lines.push("    output: gpio_backlight_pwm");
+        lines.push(`    output: ${outputId}`);
     }
     lines.push("");
     return lines;
@@ -126,7 +135,7 @@ export function generateI2CSection(profile) {
         lines.push("  - sda: " + profile.pins.i2c.sda);
         lines.push("    scl: " + profile.pins.i2c.scl);
         lines.push("    scan: " + (profile.i2c_config?.scan !== false));
-        lines.push("    id: bus_a");
+        lines.push(`    id: ${resolveI2cBusId(profile)}`);
         if (profile.i2c_config?.frequency) {
             lines.push("    frequency: " + profile.i2c_config.frequency);
         }
@@ -144,8 +153,7 @@ export function generateSPISection(profile) {
     if (profile && profile.pins && profile.pins.spi) {
         lines.push("spi:");
         const spi = profile.pins.spi;
-        if (spi.id) lines.push(`  - id: ${spi.id}`);
-        else lines.push("  - id: spi_bus");
+        lines.push(`  - id: ${resolveSpiBusId(profile)}`);
 
         lines.push(`    clk_pin: ${spi.clk}`);
         if (spi.mosi) lines.push(`    mosi_pin: ${spi.mosi}`);
@@ -298,7 +306,7 @@ export function generateDisplaySection(profile, layout = {}, isLvgl = false) {
  * @param {WidgetLike[]} [allWidgets]
  * @returns {string[]}
  */
-export function generateSensorSection(profile, widgetSensorLines = [], displayId = "my_display", allWidgets = [], options = {}) {
+export function generateSensorSection(profile, widgetSensorLines = [], displayId = STANDARD_COMPONENT_IDS.display, allWidgets = [], options = {}) {
     return generateSensorSectionHelper(profile, widgetSensorLines, displayId, allWidgets, options);
 }
 
@@ -309,7 +317,7 @@ export function generateSensorSection(profile, widgetSensorLines = [], displayId
  * @param {WidgetLike[]} [touchAreaWidgets]
  * @returns {string[]}
  */
-export function generateBinarySensorSection(profile, numPages, displayId = "my_display", touchAreaWidgets = []) {
+export function generateBinarySensorSection(profile, numPages, displayId = STANDARD_COMPONENT_IDS.display, touchAreaWidgets = []) {
     return generateBinarySensorSectionHelper(profile, numPages, displayId, touchAreaWidgets);
 }
 
@@ -319,7 +327,7 @@ export function generateBinarySensorSection(profile, numPages, displayId = "my_d
  * @param {string} [displayId]
  * @returns {string[]}
  */
-export function generateButtonSection(profile, numPages, displayId = "my_display") {
+export function generateButtonSection(profile, numPages, displayId = STANDARD_COMPONENT_IDS.display) {
     return generateButtonSectionHelper(profile, numPages, displayId);
 }
 
@@ -358,7 +366,7 @@ export function generateAXP2101Section(profile) {
 
     return [
         "axp2101:",
-        "  i2c_id: bus_a",
+        `  i2c_id: ${resolveI2cBusId(profile)}`,
         "  address: 0x34",
         "  irq_pin: GPIO21",
         "  battery_voltage:",

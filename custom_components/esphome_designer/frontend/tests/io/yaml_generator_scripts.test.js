@@ -24,7 +24,9 @@ describe('yaml_generator_scripts', () => {
         expect(lines).not.toContain('id(my_display).update();');
         expect(lines).toContain('lvgl.page.show: page_0');
         expect(lines).toContain('lvgl.page.show: page_1');
-        expect(lines).toContain('id(backlight_pwm).set_level(0.8);');
+        expect(lines).toContain('id(display_backlight).turn_on().set_brightness(0.8).perform();');
+        expect(lines).toContain('auto call = id(display_backlight).make_call();');
+        expect(lines).not.toContain('backlight_pwm');
         expect(lines).toContain('id(last_page_switch_time) = now;');
         expect(lines).not.toContain('id(last_page_switch_time) = millis();');
         expect(lines).toContain('Auto-switching to scheduled page %d');

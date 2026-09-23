@@ -1,5 +1,5 @@
 import { getTouchDebounceMs } from './navigation_debounce.js';
-import { resolveTouchscreenId } from './display_ids.js';
+import { STANDARD_COMPONENT_IDS, resolveTouchscreenId } from './display_ids.js';
 
 /** @typedef {Record<string, any>} ProfileLike */
 /** @typedef {Record<string, any>} WidgetLike */
@@ -12,7 +12,7 @@ import { resolveTouchscreenId } from './display_ids.js';
  * @param {WidgetLike[]} [touchAreaWidgets]
  * @returns {string[]}
  */
-export function generateBinarySensorSection(profile, numPages, displayId = "my_display", touchAreaWidgets = []) {
+export function generateBinarySensorSection(profile, numPages, displayId = STANDARD_COMPONENT_IDS.display, touchAreaWidgets = []) {
     const lines = /** @type {string[]} */ ([]);
     const hasButtons = profile && profile.features && profile.features.buttons;
     const hasTouchAreas = touchAreaWidgets.length > 0;
@@ -222,7 +222,7 @@ export function generateBinarySensorSection(profile, numPages, displayId = "my_d
  * @param {string} [displayId]
  * @returns {string[]}
  */
-export function generateButtonSection(profile, numPages, displayId = "my_display") {
+export function generateButtonSection(profile, numPages, displayId = STANDARD_COMPONENT_IDS.display) {
     const lines = /** @type {string[]} */ ([]);
     lines.push("button:");
 

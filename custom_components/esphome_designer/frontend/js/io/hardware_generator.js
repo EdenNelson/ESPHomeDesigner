@@ -1,3 +1,5 @@
+import { STANDARD_COMPONENT_IDS } from './display_ids.js';
+
 /**
  * Hardware Generator for Custom Profiles
  * Generates an ESPHome YAML Recipe based on user inputs.
@@ -133,6 +135,7 @@ export function generateCustomHardwareYaml(config) {
     // SPI Bus (Common for most displays)
     if (!noSpiDisplay && pins.clk && pins.mosi) {
         lines.push("spi:");
+        lines.push(`  id: ${STANDARD_COMPONENT_IDS.spiBus}`);
         lines.push(`  clk_pin: ${pins.clk}`);
         lines.push(`  mosi_pin: ${pins.mosi}`);
         if (pins.miso) lines.push(`  miso_pin: ${pins.miso}`);
@@ -142,6 +145,7 @@ export function generateCustomHardwareYaml(config) {
     // I2C Bus (For Touch)
     if (pins.sda && pins.scl) {
         lines.push("i2c:");
+        lines.push(`  id: ${STANDARD_COMPONENT_IDS.i2cBus}`);
         lines.push(`  sda: ${pins.sda}`);
         lines.push(`  scl: ${pins.scl}`);
         lines.push("  scan: true");
@@ -151,7 +155,7 @@ export function generateCustomHardwareYaml(config) {
     // Display
     // Fix #330: Always emit a display id so scripts can reference it
     const isLcdTech = config.tech === 'lcd' || (!config.tech);
-    const displayIdValue = isLcdTech ? 'my_display' : 'epaper_display';
+    const displayIdValue = isLcdTech ? STANDARD_COMPONENT_IDS.display : STANDARD_COMPONENT_IDS.epaperDisplay;
     lines.push("display:");
     lines.push(`  - platform: ${driver}`);
     lines.push(`    id: ${displayIdValue}`);
@@ -226,14 +230,14 @@ export function generateCustomHardwareYaml(config) {
         lines.push("output:");
         lines.push("  - platform: ledc");
         lines.push(`    pin: ${pins.backlight}`);
-        lines.push("    id: backlight_brightness_output");
+        lines.push(`    id: ${STANDARD_COMPONENT_IDS.backlightOutput}`);
         lines.push(`    min_power: "${minPower}"`);
         lines.push("    zero_means_zero: true");
         lines.push("");
         lines.push("light:");
         lines.push("  - platform: monochromatic");
-        lines.push("    output: backlight_brightness_output");
-        lines.push("    id: display_backlight");
+        lines.push(`    output: ${STANDARD_COMPONENT_IDS.backlightOutput}`);
+        lines.push(`    id: ${STANDARD_COMPONENT_IDS.backlight}`);
         lines.push("    name: LCD Backlight");
         lines.push("    icon: mdi:wall-sconce-flat-outline");
         lines.push("    restore_mode: ALWAYS_ON");
@@ -293,6 +297,7 @@ export function generateCustomHardwareYaml(config) {
     if (touchTech !== "none") {
         lines.push("touchscreen:");
         lines.push(`  - platform: ${touchTech}`);
+        lines.push(`    id: ${STANDARD_COMPONENT_IDS.touchscreen}`);
         if (pins.touch_int) lines.push(`    interrupt_pin: ${pins.touch_int}`);
         if (pins.touch_rst) lines.push(`    reset_pin: ${pins.touch_rst}`);
 
@@ -304,7 +309,7 @@ export function generateCustomHardwareYaml(config) {
             lines.push("          then:");
             lines.push("            - lvgl.resume:");
             lines.push("            - lvgl.widget.redraw:");
-            lines.push("            - light.turn_on: display_backlight");
+            lines.push(`            - light.turn_on: ${STANDARD_COMPONENT_IDS.backlight}`);
         }
         lines.push("");
     }

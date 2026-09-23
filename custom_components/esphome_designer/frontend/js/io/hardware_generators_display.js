@@ -1,4 +1,11 @@
-import { resolveTouchscreenId } from './display_ids.js';
+import {
+    STANDARD_COMPONENT_IDS,
+    resolveTouchscreenId,
+    resolveI2cBusId,
+    resolveSpiBusId,
+    resolveBacklightId,
+    resolveBacklightOutputId
+} from './display_ids.js';
 
 /**
  * @typedef {Record<string, any>} HardwareProfileLike
@@ -30,7 +37,7 @@ function isClassicEsp32InputOnlyPin(pin) {
  * @param {boolean} [isLvgl=false]
  * @returns {string[]}
  */
-export function generateTouchscreenSection(profile, displayId = "my_display", _displayRotation = 0, layout = {}, isLvgl = false) {
+export function generateTouchscreenSection(profile, displayId = STANDARD_COMPONENT_IDS.display, _displayRotation = 0, layout = {}, isLvgl = false) {
     if (!profile || !profile.touch) return [];
 
     const t = profile.touch;
@@ -93,7 +100,7 @@ export function generateTouchscreenSection(profile, displayId = "my_display", _d
         lines.push("          then:");
         lines.push("            - lvgl.resume:");
         lines.push("            - lvgl.widget.redraw:");
-        lines.push("            - light.turn_on: display_backlight");
+        lines.push(`            - light.turn_on: ${resolveBacklightId(profile)}`);
     }
 
     if (t.calibration) {
@@ -115,6 +122,8 @@ export function generateBacklightSection(profile) {
     if (!profile || !profile.backlight) return lines;
 
     const bl = profile.backlight;
+    const lightId = resolveBacklightId(profile);
+    const outputId = resolveBacklightOutputId(profile);
     if (bl.platform === "ledc" || bl.platform === "gpio" || bl.platform === "switch") {
         if (bl.platform === "switch") {
             lines.push("switch:");
@@ -139,7 +148,7 @@ export function generateBacklightSection(profile) {
         } else {
             lines.push("output:");
             lines.push(`  - platform: ${bl.platform}`);
-            lines.push("    id: gpio_backlight_pwm");
+            lines.push(`    id: ${outputId}`);
             lines.push(`    pin: ${bl.pin}`);
             if (bl.frequency) lines.push(`    frequency: ${bl.frequency}`);
             lines.push("");
@@ -149,7 +158,7 @@ export function generateBacklightSection(profile) {
     lines.push("light:");
     lines.push("  - platform: monochromatic");
     lines.push("    name: Display Backlight");
-    lines.push("    id: display_backlight");
+    lines.push(`    id: ${lightId}`);
     lines.push("    restore_mode: ALWAYS_ON");
 
     if (bl.platform === "switch") {
@@ -169,7 +178,7 @@ export function generateBacklightSection(profile) {
         lines.push("          else:");
         lines.push("            - switch.turn_off: lcdbacklight");
     } else {
-        lines.push("    output: gpio_backlight_pwm");
+        lines.push(`    output: ${outputId}`);
     }
     lines.push("");
     return lines;
@@ -210,7 +219,7 @@ export function generateI2CSection(profile) {
         lines.push(`  - sda: ${profile.pins.i2c.sda}`);
         lines.push(`    scl: ${profile.pins.i2c.scl}`);
         lines.push(`    scan: ${profile.i2c_config?.scan !== false}`);
-        lines.push("    id: bus_a");
+        lines.push(`    id: ${resolveI2cBusId(profile)}`);
         if (profile.i2c_config?.frequency) {
             lines.push(`    frequency: ${profile.i2c_config.frequency}`);
         }
@@ -229,7 +238,7 @@ export function generateSPISection(profile) {
     if (profile && profile.pins && profile.pins.spi) {
         lines.push("spi:");
         const spi = profile.pins.spi;
-        lines.push(spi.id ? `  - id: ${spi.id}` : "  - id: spi_bus");
+        lines.push(`  - id: ${resolveSpiBusId(profile)}`);
         lines.push(`    clk_pin: ${spi.clk}`);
         if (spi.mosi) lines.push(`    mosi_pin: ${spi.mosi}`);
         if (spi.miso) lines.push(`    miso_pin: ${spi.miso}`);
@@ -281,7 +290,7 @@ export function generateAXP2101Section(profile) {
     if (!profile.features || !profile.features.axp2101 || profile.features.manual_pmic) return [];
     return [
         "axp2101:",
-        "  i2c_id: bus_a",
+        `  i2c_id: ${resolveI2cBusId(profile)}`,
         "  address: 0x34",
         "  irq_pin: GPIO21",
         "  battery_voltage:",

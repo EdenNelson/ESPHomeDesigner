@@ -1,4 +1,5 @@
 import { renderOnDeviceTemperature } from './render.js';
+import { resolveI2cBusId } from '../../js/io/display_ids.js';
 /**
  * On-Device Temperature Plugin
  */
@@ -449,7 +450,7 @@ export default {
 
                     if (shtPlatform === "shtcx" && !lines.some(l => l.includes("address: 0x70"))) {
                         lines.push("    address: 0x70");
-                        lines.push("    i2c_id: bus_a");
+                        lines.push(`    i2c_id: ${resolveI2cBusId(profile)}`);
                     }
                     if (shtPlatform === "sht3xd" && !lines.some(l => l.includes("address: 0x44"))) {
                         lines.push("    address: 0x44");

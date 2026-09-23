@@ -2,6 +2,7 @@
  * Online Image Plugin
  */
 import { AppState } from '@core/state';
+import { resolveDisplayId } from '../../js/io/display_ids.js';
 
 const render = (el, widget, { getColorStyle }) => {
     const props = widget.props || {};
@@ -197,7 +198,7 @@ const onExportComponents = (context) => {
 
 
 
-            const displayId = profile.features?.lcd ? "my_display" : "epaper_display";
+            const displayId = resolveDisplayId(profile);
             if (!context.isLvgl) {
                 lines.push(`    on_download_finished:`);
                 lines.push(`      then:`);

@@ -1,4 +1,5 @@
 import { buildLayoutDiagnostics } from './yaml_generation_diagnostics.js';
+import { resolveDisplayId, resolveI2cBusId } from '../display_ids.js';
 
 /**
  * @param {any} payload
@@ -191,7 +192,7 @@ export function generateSystemSections(profile, layout) {
             lines.push("#       - lambda: |-");
             lines.push("#           auto write_reg = [](uint8_t reg, uint8_t val) {");
             lines.push("#             uint8_t data[2] = {reg, val};");
-            lines.push("#             id(bus_a)->write(0x34, data, 2);");
+            lines.push(`#             id(${resolveI2cBusId(profile)})->write(0x34, data, 2);`);
             lines.push("#           };");
             lines.push("#           write_reg(0x94, 0x1C); // ALDO3 3.3V");
             lines.push("#           write_reg(0x95, 0x1C); // ALDO4 3.3V");
@@ -227,7 +228,7 @@ export function generateSystemSections(profile, layout) {
         lines.push("#       - script.execute: manage_run_and_sleep");
         lines.push("#");
         lines.push("#       # 3. Initial Screen Update");
-        lines.push("#       - component.update: epaper_display");
+        lines.push(`#       - component.update: ${resolveDisplayId(profile)}`);
     } else {
         lines.push("#       - script.execute: manage_run_and_sleep");
     }

@@ -4,6 +4,7 @@
  */
 
 import { Logger } from '../../utils/logger.js';
+import { resolveBacklightId, resolveTouchscreenId } from '../display_ids.js';
 
 // Matches a YAML block scalar header value (|, |-, >, >2+, ...). Keys carrying
 // one own every following deeper-indented line, including blank lines and lines
@@ -200,8 +201,13 @@ export function applyPackageOverrides(yaml, profile, orientation, isLvgl = false
         }
 
         // Fix #129: Indentation-aware GT911 transform logic
-        // Match any whitespace before id: my_touchscreen
-        const idMatch = yaml.match(/^(\s*)id:\s*my_touchscreen/m);
+        // Match any whitespace before the touchscreen id. Profiles whose recipe
+        // carries its own tuned touch transform opt out with
+        // skipTouchTransformOverride.
+        const touchscreenId = resolveTouchscreenId(profile).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const idMatch = profile.skipTouchTransformOverride
+            ? null
+            : yaml.match(new RegExp(`^(\\s*)id:\\s*${touchscreenId}\\b`, 'm'));
         if (idMatch) {
             const indent = idMatch[1];
             let transform = "";
@@ -233,7 +239,7 @@ export function applyPackageOverrides(yaml, profile, orientation, isLvgl = false
             if (isLvgl && layout.lcdEcoStrategy === 'dim_after_timeout') {
                 // Check if on_release already exists to avoid duplication
                 if (!yaml.includes("on_release:")) {
-                    const wakeupTrigger = `\n${indent}on_release:\n${indent}  - if:\n${indent}      condition: lvgl.is_paused\n${indent}      then:\n${indent}        - lvgl.resume:\n${indent}        - lvgl.widget.redraw:\n${indent}        - light.turn_on: display_backlight`;
+                    const wakeupTrigger = `\n${indent}on_release:\n${indent}  - if:\n${indent}      condition: lvgl.is_paused\n${indent}      then:\n${indent}        - lvgl.resume:\n${indent}        - lvgl.widget.redraw:\n${indent}        - light.turn_on: ${resolveBacklightId(profile)}`;
 
                     const tsBlockStart = yaml.search(/^touchscreen:/m);
                     if (tsBlockStart !== -1) {

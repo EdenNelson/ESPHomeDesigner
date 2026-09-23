@@ -4,7 +4,7 @@
  */
 
 import { DEVICE_PROFILES } from './devices.js';
-import { resolveDisplayId, resolveTouchscreenId } from './display_ids.js';
+import { resolveBacklightId, resolveDisplayId, resolveTouchscreenId } from './display_ids.js';
 import { serializeWidget, serializeYamlObject } from './yaml_export_lvgl_serialization.js';
 import { transpilePageWidget } from './yaml_export_lvgl_transpile.js';
 
@@ -99,7 +99,7 @@ export function generateLVGLSnippet(pages, deviceModel, profileOverride = null, 
         lines.push("  on_idle:");
         lines.push(`    timeout: ${timeout}`);
         lines.push("    then:");
-        lines.push("      - light.turn_off: display_backlight");
+        lines.push(`      - light.turn_off: ${resolveBacklightId(profile)}`);
         lines.push("      - lvgl.pause:");
     }
     lines.push("");

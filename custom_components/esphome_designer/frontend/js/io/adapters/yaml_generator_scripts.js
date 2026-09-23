@@ -1,5 +1,5 @@
 import { getPageSwitchDebounceMs } from '../navigation_debounce.js';
-import { resolveDisplayId } from '../display_ids.js';
+import { resolveBacklightId, resolveDisplayId } from '../display_ids.js';
 import { buildLayoutDiagnostics } from './yaml_generation_diagnostics.js';
 
 /**
@@ -12,6 +12,7 @@ export function generateScriptSection(payload, pages, profile) {
     const lines = [];
     const diagnostics = buildLayoutDiagnostics(payload, pages);
     const displayId = resolveDisplayId(profile);
+    const backlightId = resolveBacklightId(profile);
     const hasMultiplePages = pages.length > 1;
     const autoCycleEnabled = payload.autoCycleEnabled && pages.length > 1;
     const hasAnyVisibility = pages.some((p) => p.visible_from || p.visible_to);
@@ -140,7 +141,7 @@ export function generateScriptSection(payload, pages, profile) {
             lines.push(`            ESP_LOGI("display", "Switched to page %d", target);`);
         if (isBacklightStrategy) {
             lines.push(`            // LCD Strategy: Wake up backlight on interaction/page change`);
-            lines.push(`            id(backlight_pwm).set_level(0.8); // Restore brightness`);
+            lines.push(`            id(${backlightId}).turn_on().set_brightness(0.8).perform(); // Restore brightness`);
         }
         lines.push("          }");
         if (isLvgl) {
@@ -298,12 +299,12 @@ export function generateScriptSection(payload, pages, profile) {
         if (isBacklightStrategy) {
             runtimeLines.push("          #ifdef USE_BACKLIGHT");
             runtimeLines.push("          if (is_sleep_time) {");
-            runtimeLines.push("              auto call = id(backlight_pwm).make_call();");
+            runtimeLines.push(`              auto call = id(${backlightId}).make_call();`);
             runtimeLines.push("              call.set_brightness(0.0);");
             runtimeLines.push("              call.perform();");
             runtimeLines.push("              interval = 3600; // Check back in an hour");
             runtimeLines.push("          } else {");
-            runtimeLines.push("              auto call = id(backlight_pwm).make_call();");
+            runtimeLines.push(`              auto call = id(${backlightId}).make_call();`);
             runtimeLines.push("              call.set_brightness(0.8);");
             runtimeLines.push("              call.perform();");
             runtimeLines.push("          }");
