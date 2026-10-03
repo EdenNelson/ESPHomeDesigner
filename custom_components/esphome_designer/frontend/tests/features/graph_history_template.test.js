@@ -62,7 +62,11 @@ describe('graph history template helper', () => {
         expect(yaml).toContain('unique_id: graph_history_sensor_energy_usage');
         expect(yaml).toContain('state: "{{ states(\\"sensor.energy_usage\\") }}"');
         expect(yaml).toContain('history_points: >');
-        expect(yaml).toContain("{{ graph_history_sensor_energy_usage.result | default([]) | map(attribute='value') | list | tojson }}");
+        expect(yaml).toContain('{% for row in graph_history_sensor_energy_usage.result | default([]) %}');
+        expect(yaml).toContain("{% if v in ['unknown', 'unavailable', 'none', ''] %}{% set v = none %}{% endif %}");
+        expect(yaml).toContain('{% set ns.items = ns.items + [[row.ts, v]] %}');
+        expect(yaml).toContain('{{ ns.items | tojson }}');
+        expect(yaml).not.toContain("states.state NOT IN ('unknown', 'unavailable', 'none')");
         expect(yaml).toContain('window_seconds: 7200');
     });
 

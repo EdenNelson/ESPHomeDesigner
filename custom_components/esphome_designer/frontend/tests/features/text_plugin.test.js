@@ -98,7 +98,7 @@ describe('Text Plugin', () => {
         expect(output).toContain('it.printf(260, 50, id(font_id_123), COLOR_BLUE, TextAlign::BOTTOM_CENTER, "Line 2");');
     });
 
-    it('should export filled_rounded_rectangle and draw_rrect_border when border_radius is set', () => {
+    it('should export draw_filled_rrect and draw_rrect_border when border_radius is set', () => {
         mockWidget.props.bg_color = 'yellow';
         mockWidget.props.border_width = 2;
         mockWidget.props.border_color = 'black';
@@ -107,7 +107,8 @@ describe('Text Plugin', () => {
         textPlugin.export(mockWidget, mockContext);
 
         const output = mockContext.lines.join('\n');
-        expect(output).toContain('it.filled_rounded_rectangle(10, 20, 500, 30, 8, COLOR_YELLOW);');
+        expect(output).not.toContain('filled_rounded_rectangle');
+        expect(output).toContain('draw_filled_rrect(10, 20, 500, 30, 8, COLOR_YELLOW);');
         expect(output).toContain('auto draw_rrect_border = [&](int x, int y, int w, int h, int r, int t, auto c)');
         expect(output).toContain('draw_rrect_border(10, 20, 500, 30, 8, 2, COLOR_BLACK);');
     });

@@ -273,7 +273,7 @@ For stable results, stick to **Native Mode** (standard widgets without LVGL pref
 Design once, export to wireless e-paper displays:
 
 - **[OpenEpaperLink](https://github.com/jjwbruijn/OpenEPaperLink)** - Select "OpenEpaperLink" mode, enter your tag's entity ID, copy the JSON for use in HA service calls
-- **[OpenDisplay](https://github.com/open-display/open-display)** - Select "OpenDisplay" mode, copy the JSON actions, send via HTTP POST
+- **[OpenDisplay](https://opendisplay.org)** - Select "OpenDisplay" mode, copy the JSON actions, send via HTTP POST
 
 Most widgets (text, shapes, images, icons, QR codes) work on all platforms. Graphs, touch areas, and LVGL are ESPHome-only.
 

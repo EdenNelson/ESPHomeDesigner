@@ -1,3 +1,24 @@
+## v1.0.0 RC46 - Forecast Clock Mode, Graph History Timeline, and Hardware Profile Fixes
+**Release Date:** October 3, 2026
+
+### Features
+- **12-Hour Hourly Forecast Labels (Issue #521):** Added a "Clock Mode" setting (24h/12h, default 24h) to the weather forecast widget. Hourly labels render as compact "3PM" style in 12h mode across the preview, display lambda (fixed and relative slots), and LVGL exports. Sensor IDs stay on the 24h scheme so existing setups keep working.
+
+### Fixes
+- **Floating Text Build Failure (Issue #515):** Replaced the invalid `it.filled_rounded_rectangle()` calls (not part of `esphome::display::Display`) with a `draw_filled_rrect` helper built from `filled_rectangle`/`filled_circle` in the text, sensor text, weather forecast, and energy widgets. Calendar event iteration now uses named `JsonArray` variables instead of ranging over temporaries for ArduinoJson 7 compatibility.
+- **Sun Times Vertical Alignment (Issue #516):** Centered the smaller element within each sunrise/sunset row (icon vs. text) in direct, LVGL, and OEPL exports to match the flex-centered preview when the font is taller than the icon.
+- **HA History Graph Timeline (Issue #517):** History graphs no longer stretch sparse data across the whole window. The HA helper now emits timestamped `[[unix_ts, value], ...]` pairs with null gaps, and the firmware plots each point at its true time position with HA-like gaps, window sliding, and single-point dots. Legacy payloads render exactly as before.
+- **Direct-Mode LVGL Page Actions (Issue #519):** An explicit Direct Lambda rendering mode no longer emits `lvgl.page.show` actions (and no longer drops the `display->update()` call), even when the hardware profile declares LVGL support.
+- **mipi_rgb Model Requirement (Issue #520):** Added the required `model:` to all bundled `mipi_rgb` hardware recipes (RPI for generic no-init RGB panels incl. verified `invert_colors`/`pclk_frequency` on Elecrow 7", exact board model on Waveshare 4.3"), plus a model hint for custom MIPI hardware without a display model.
+- **Verified Neighbor Profile Fixes (Issue #535):** Migrated the LilyGo T-Display S3 recipe from the removed `ili9xxx`/`i80` bus schema to `mipi_spi`/`t-display-s3` with octal SPI, and added the missing `esp_ldo` DSI-PHY power rail to the M5Stack Tab5 recipe.
+- **Touch on_release Indentation (Issue #539):** Fixed the `on_release:` block nesting in the Guition 4.8" recipe and hardened the touchscreen generator against dangling empty `transform:` blocks.
+- **Security:** Upgraded `js-yaml` to 4.3.2 (CVE-2026-84375 merge-key DoS fix, PR #514).
+- **Recipe Cleanup (Issue #523):** Removed the stale captive-portal comment block from the Waveshare 7" recipe.
+- **Dist-Freshness CI Gate (Issue #537):** Runtime-fetched `frontend/hardware/` recipes no longer invalidate the vite build signature, so recipe-only PRs pass the dist check without meaningless rebuilds.
+- **Release Metadata Refresh:** Updated package metadata, package-lock metadata, Home Assistant manifest version, visible header label, release notes, and rebuilt frontend production bundle for RC46.
+
+---
+
 ## v1.0.0 RC45 - OpenDisplay & OEPL Production Code Panel Fix
 **Release Date:** September 20, 2026
 

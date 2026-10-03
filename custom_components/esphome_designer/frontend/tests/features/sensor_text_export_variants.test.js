@@ -1033,7 +1033,7 @@ describe('sensor_text export variants', () => {
         expect(output).toContain('print_wrapped_text(0, 0, 120, 20, id(font_16), Color(theme_auto), TextAlign::TOP_LEFT, "Long Heading Title That Wraps");');
     });
 
-    it('exports direct-mode filled_rounded_rectangle and draw_rrect_border when border_radius is set', () => {
+    it('exports direct-mode draw_filled_rrect and draw_rrect_border when border_radius is set', () => {
         const lines = [];
         exportDirect({
             id: 'sensor_rounded',
@@ -1059,7 +1059,8 @@ describe('sensor_text export variants', () => {
         });
 
         const output = lines.join('\n');
-        expect(output).toContain('it.filled_rounded_rectangle(5, 10, 100, 50, 6, Color(red));');
+        expect(output).not.toContain('filled_rounded_rectangle');
+        expect(output).toContain('draw_filled_rrect(5, 10, 100, 50, 6, Color(red));');
         expect(output).toContain('auto draw_rrect_border = [&](int x, int y, int w, int h, int r, int t, auto c)');
         expect(output).toContain('draw_rrect_border(5, 10, 100, 50, 6, 2, Color(white));');
     });

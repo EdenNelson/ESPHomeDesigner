@@ -194,6 +194,52 @@ describe('yaml_generator_scripts', () => {
         expect(lines).toContain('id(epaper_display)->update();');
     });
 
+    it('omits lvgl.page.show in Direct mode even when the profile supports LVGL (Issue #519)', () => {
+        const lines = generateScriptSection({
+            refreshInterval: 60,
+            renderingMode: 'direct'
+        }, [
+            { refresh_s: '60' },
+            { refresh_s: '60' }
+        ], {
+            features: { lcd: true, lvgl: true }
+        }).join('\n');
+
+        expect(lines).toContain('id: change_page_to');
+        expect(lines).not.toContain('lvgl.page.show');
+        expect(lines).toContain('id(my_display)->update();');
+    });
+
+    it('keeps LVGL page switching when the mode is unset but the profile supports LVGL', () => {
+        const lines = generateScriptSection({
+            refreshInterval: 60
+        }, [
+            { refresh_s: '60' },
+            { refresh_s: '60' }
+        ], {
+            features: { lcd: true, lvgl: true }
+        }).join('\n');
+
+        expect(lines).toContain('lvgl.page.show: page_0');
+        expect(lines).toContain('lvgl.page.show: page_1');
+        expect(lines).not.toContain('id(my_display)->update();');
+    });
+
+    it('forces LVGL page switching when lvgl_ widgets are present despite Direct mode', () => {
+        const lines = generateScriptSection({
+            refreshInterval: 60,
+            renderingMode: 'direct'
+        }, [
+            { widgets: [{ type: 'text', hidden: false }] },
+            { widgets: [{ type: 'lvgl_label', hidden: false }] }
+        ], {
+            features: { lcd: true }
+        }).join('\n');
+
+        expect(lines).toContain('lvgl.page.show: page_1');
+        expect(lines).not.toContain('id(my_display)->update();');
+    });
+
     it('enables battery rail and triggers battery sensor updates in manage_run_and_sleep', () => {
         const lines = generateScriptSection({
             deepSleepEnabled: true,

@@ -1024,6 +1024,7 @@ exports[`Plugin Defaults Snapshots > should match snapshot for defaults of weath
   "border_color": "theme_auto",
   "border_radius": 0,
   "border_width": 0,
+  "clock_mode": "24h",
   "color": "theme_auto",
   "custom_font_family": "",
   "day_font_size": 12,

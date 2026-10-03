@@ -313,4 +313,40 @@ describe('calendar exports', () => {
         // Summary uses 400 weight font
         expect(output).toContain('it.printf(x + 50, eventY, id(font_400_18), Color(theme_auto), TextAlign::TOP_LEFT,');
     });
+
+    it('iterates calendar event arrays via named JsonArray variables (Issue #515)', () => {
+        const lines = [];
+
+        exportDirect({
+            x: 0,
+            y: 0,
+            width: 300,
+            height: 200,
+            entity_id: 'sensor.family_calendar',
+            props: {
+                show_header: false,
+                show_grid: false,
+                show_events: true
+            }
+        }, {
+            lines,
+            addFont: vi.fn(() => 'font_ref'),
+            getColorConst: (value) => `Color(${value})`,
+            addDitherMask: vi.fn(),
+            getCondProps: () => ({}),
+            getConditionCheck: () => '',
+            isEpaper: false
+        });
+
+        const output = lines.join('\n');
+        // Must not range-for over a temporary as<JsonArray>() result (fails on ArduinoJson 7.4.x / ESPHome 2026)
+        expect(output).not.toContain('for (JsonVariant event : dayEntry["all_day"].as<JsonArray>())');
+        expect(output).not.toContain('for (JsonVariant event : dayEntry["other"].as<JsonArray>())');
+        expect(output).toContain('JsonVariant all_day_var = dayEntry["all_day"];');
+        expect(output).toContain('JsonArray all_day_arr = all_day_var.as<JsonArray>();');
+        expect(output).toContain('for (JsonVariant event : all_day_arr)');
+        expect(output).toContain('JsonVariant other_var = dayEntry["other"];');
+        expect(output).toContain('JsonArray other_arr = other_var.as<JsonArray>();');
+        expect(output).toContain('for (JsonVariant event : other_arr)');
+    });
 });

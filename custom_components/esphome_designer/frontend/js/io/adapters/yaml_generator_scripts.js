@@ -24,7 +24,28 @@ export function generateScriptSection(payload, pages, profile) {
     const isLcd = !!(profile.features && (profile.features.lcd || profile.features.oled));
     const isEpaper = !!(profile.features && (profile.features.epaper || profile.features.epd));
     const isOled = !!(profile.features && profile.features.oled);
-    const isLvgl = payload.renderingMode === 'lvgl' || !!(profile.features && (profile.features.lvgl || profile.features.lv_display));
+    // Mirror detectRenderingMode() in esphome_adapter_profile.js: an explicit
+    // rendering mode always wins over hardware profile features, so Direct
+    // Lambda mode never emits lvgl.page.show actions (Issue #519). Visible
+    // lvgl_ widgets still force LVGL mode as a safety net.
+    const explicitMode = String(payload.renderingMode || '').trim().toLowerCase();
+    let isLvgl = !!(profile.features && (profile.features.lvgl || profile.features.lv_display));
+    if (explicitMode === 'direct') {
+        isLvgl = false;
+    } else if (explicitMode === 'lvgl') {
+        isLvgl = true;
+    }
+    if (!isLvgl && Array.isArray(pages)) {
+        for (const page of pages) {
+            for (const widget of ((page && page.widgets) || []).filter((candidate) => !candidate?.hidden)) {
+                if (String(widget.type || '').startsWith('lvgl_')) {
+                    isLvgl = true;
+                    break;
+                }
+            }
+            if (isLvgl) break;
+        }
+    }
     const debounceMs = getPageSwitchDebounceMs(profile);
     const backlightPin = profile.backlight?.pin || profile.pins?.backlight || null;
     const lcdStrategy = payload.lcdEcoStrategy || 'backlight_off';

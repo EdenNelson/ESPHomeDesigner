@@ -32,7 +32,12 @@ const TEXT_EXTENSIONS = new Set([
     '.yml'
 ]);
 
-const SOURCE_DIRS = ['assets', 'css', 'features', 'hardware', 'js', 'panel'];
+// NOTE: frontend/hardware/*.yaml recipes are intentionally NOT tracked here.
+// They are fetched at runtime via the Home Assistant API and are never
+// bundled into dist/ by vite, so recipe-only changes must not invalidate the
+// dist-freshness signature (Issue #537). The mipi_rgb model guard and other
+// recipe content checks live in the vitest suite instead.
+const SOURCE_DIRS = ['assets', 'css', 'features', 'js', 'panel'];
 const SOURCE_FILES = ['editor.css', 'index.html', 'materialdesignicons-webfont.ttf'];
 
 function compareStrings(left, right) {

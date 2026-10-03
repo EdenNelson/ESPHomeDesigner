@@ -369,7 +369,21 @@ export default {
         if (bgColorProp && bgColorProp !== "transparent") {
             const bgColorConst = getColorConst(bgColorProp);
             if (radius > 0) {
-                lines.push(`        it.filled_rounded_rectangle(${w.x}, ${w.y}, ${w.width}, ${w.height}, ${radius}, ${bgColorConst});`);
+                lines.push("        {");
+                lines.push("          auto draw_filled_rrect = [&](int x, int y, int w, int h, int r, auto c) {");
+                lines.push("            if (r <= 0) { it.filled_rectangle(x, y, w, h, c); return; }");
+                lines.push("            if (r * 2 > w) r = w / 2;");
+                lines.push("            if (r * 2 > h) r = h / 2;");
+                lines.push("            it.filled_rectangle(x + r, y, w - 2 * r, h, c);");
+                lines.push("            it.filled_rectangle(x, y + r, r, h - 2 * r, c);");
+                lines.push("            it.filled_rectangle(x + w - r, y + r, r, h - 2 * r, c);");
+                lines.push("            it.filled_circle(x + r, y + r, r, c);");
+                lines.push("            it.filled_circle(x + w - r - 1, y + r, r, c);");
+                lines.push("            it.filled_circle(x + r, y + h - r - 1, r, c);");
+                lines.push("            it.filled_circle(x + w - r - 1, y + h - r - 1, r, c);");
+                lines.push("          };");
+                lines.push(`          draw_filled_rrect(${w.x}, ${w.y}, ${w.width}, ${w.height}, ${radius}, ${bgColorConst});`);
+                lines.push("        }");
             } else {
                 lines.push(`        it.filled_rectangle(${w.x}, ${w.y}, ${w.width}, ${w.height}, ${bgColorConst});`);
             }
