@@ -335,7 +335,7 @@ The workflow is safe and deterministic - same layout always produces the same YA
 
 **Currently Supported:**
 - **Seeed Studio**: [reTerminal E1001](https://www.seeedstudio.com/reTerminal-E1001-p-6534.html?sensecap_affiliate=U5gNTEF&referring_service=link) (BW), [reTerminal E1002](https://www.seeedstudio.com/reTerminal-E1002-p-6533.html?sensecap_affiliate=U5gNTEF&referring_service=link) (Color), [reTerminal E1003 Frame Bundle](https://www.seeedstudio.com/reTerminal-E1003-p-6731.html?sensecap_affiliate=U5gNTEF&referring_service=link) (ESP-IDF, ESPHome 2026.7.0+), [reTerminal E1004](https://www.seeedstudio.com/reTerminal-E1004-p-6692.html?sensecap_affiliate=U5gNTEF&referring_service=link) (supported), [reTerminal Sticky](https://www.seeedstudio.com/reTerminal-Sticky-p-6861.html?sensecap_affiliate=U5gNTEF&referring_service=link), [TRMNL 7.5'' OG DIY Kit](https://www.seeedstudio.com/TRMNL-7-5-Inch-OG-DIY-Kit-p-6481.html?sensecap_affiliate=U5gNTEF&referring_service=link) (S3)
-- **Waveshare**: [PhotoPainter](https://www.waveshare.com/esp32-s3-photopainter.htm?&aff_id=136175) (7-Color)
+- **Waveshare**: [ESP32-S3-PhotoPainter](https://www.waveshare.com/esp32-s3-photopainter.htm?&aff_id=136175) (Spectra E6, 6-Color)
 - **Raspberry Pi**: Pico W and Pico 2 W with Waveshare Pico e-Paper 2.13" V3
 - **Elecrow**: ESP32-P4 9" HMI 1024x600 (V1.2)
 - **M5Stack**: [M5Paper](https://shop.m5stack.com/products/m5paper-esp32-development-kit-v1-1-960x540-4-7-eink-display-235-ppi?ref=qcwynykf) (Touch), [M5Core Ink](https://shop.m5stack.com/products/m5stack-esp32-core-ink-development-kit1-54-elnk-display?ref=qcwynykf), [M5Stack Tab5](https://shop.m5stack.com/products/m5stack-tab5-iot-development-kit-esp32-p4?ref=qcwynykf) (ESP32-P4)

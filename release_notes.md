@@ -1,3 +1,18 @@
+## v1.0.0 RC47 - Sun Times Clock Mode, LVGL Sensor ID Unification, and Security Update
+**Release Date:** October 10, 2026
+
+### Features
+- **12-Hour Sunrise/Sunset Labels (Issue #540):** Added a "Clock Mode" setting (24h/12h, default 24h) to the sunrise/sunset widget, mirroring the forecast widget. Applies to the preview, display lambdas, LVGL lambdas, and HA templates.
+
+### Fixes
+- **LVGL Slider Service Domain (Issue #541):** Slider actions are now domain-aware: `input_number.*` entities use `input_number.set_value` while `number.*` keeps `number.set_value`.
+- **LVGL Sensor ID Mismatches (Issue #543):** Unified all entity-derived sensor IDs on `makeSafeId` across LVGL widgets, graph, calendar, template bars, and signal widgets, so long entity IDs resolve to the same truncated ID on both declaration and reference sides.
+- **Security:** Upgraded `js-yaml` to 4.3.2 (CVE-2026-84375 merge-key DoS fix, PR #514).
+- **Docs:** Fixed the OpenDisplay site link (PR #536) and the PhotoPainter naming (PR #548) in the README.
+- **Release Metadata Refresh:** Updated package metadata, package-lock metadata, Home Assistant manifest version, visible header label, release notes, and rebuilt frontend production bundle for RC47.
+
+---
+
 ## v1.0.0 RC46 - Forecast Clock Mode, Graph History Timeline, and Hardware Profile Fixes
 **Release Date:** October 3, 2026
 
@@ -12,7 +27,6 @@
 - **mipi_rgb Model Requirement (Issue #520):** Added the required `model:` to all bundled `mipi_rgb` hardware recipes (RPI for generic no-init RGB panels incl. verified `invert_colors`/`pclk_frequency` on Elecrow 7", exact board model on Waveshare 4.3"), plus a model hint for custom MIPI hardware without a display model.
 - **Verified Neighbor Profile Fixes (Issue #535):** Migrated the LilyGo T-Display S3 recipe from the removed `ili9xxx`/`i80` bus schema to `mipi_spi`/`t-display-s3` with octal SPI, and added the missing `esp_ldo` DSI-PHY power rail to the M5Stack Tab5 recipe.
 - **Touch on_release Indentation (Issue #539):** Fixed the `on_release:` block nesting in the Guition 4.8" recipe and hardened the touchscreen generator against dangling empty `transform:` blocks.
-- **Security:** Upgraded `js-yaml` to 4.3.2 (CVE-2026-84375 merge-key DoS fix, PR #514).
 - **Recipe Cleanup (Issue #523):** Removed the stale captive-portal comment block from the Waveshare 7" recipe.
 - **Dist-Freshness CI Gate (Issue #537):** Runtime-fetched `frontend/hardware/` recipes no longer invalidate the vite build signature, so recipe-only PRs pass the dist check without meaningless rebuilds.
 - **Release Metadata Refresh:** Updated package metadata, package-lock metadata, Home Assistant manifest version, visible header label, release notes, and rebuilt frontend production bundle for RC46.
